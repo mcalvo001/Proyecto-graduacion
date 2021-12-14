@@ -1,0 +1,23 @@
+﻿#foto{
+    width:300px;
+    height:300px;
+}
+.fotos {
+    width: 100px;
+    height: 100px;
+}
+#div1{
+   /*min-height: 500px;*/
+    width:100%;
+}
+#div2 {
+    /*min-height: 500px;*/
+    width: 30%;
+}
+.display dataTable no-footer {
+    width: 100%;
+}
+.sin_borde{
+    border:none;
+    background:none;
+}
