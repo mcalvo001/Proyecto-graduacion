@@ -1,0 +1,141 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <link href="https://cdn.datatables.net/1.11.1/css/jquery.dataTables.min.css" rel="stylesheet">
+</head>
+<body>
+    <div id="espacionav"></div>
+    <hr />
+    <div>
+        <div><p id="cargando"></p></div>
+        <div>
+            <h1>Gestión "Tipo de asignación"</h1>
+
+            <input type="text" id="id_tipo" placeholder="Id del tipo" />
+            <input type="text" id="tipo_asignacion" placeholder="Tipo de la asignacion" />
+
+
+            <input type="button" value="Guardar" class="btn btn-success" id="btn_guardar" />
+            <input type="button" value="Eliminar" class="btn btn-danger" id="btn_eliminar" />
+            <input type="button" value="Actualizar" class="btn btn-warning" id="btn_actualizar" />
+        </div>
+    </div>
+    <hr />
+    <div class="table-responsive-sm">
+        <table id="tipo" class="table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Tipo</th>
+                    <th>Modificar</th>
+                    <th>Eliminar</th>
+                </tr>
+            </thead>
+            <tbody id="tipos_body">
+        </table>
+    </div>
+    <input hidden id="ocultoid" />
+    <div id="footer"></div>
+    <script src="Js/jquery-3.6.0.min.js"></script>
+    <script src="Js/Ajax.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/1.11.1/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript">
+
+        function obtenerid() {
+            const valores = window.location.search;
+            const urlParams = new URLSearchParams(valores);
+            var id = urlParams.get('id');
+            document.getElementById("ocultoid").value = id;
+            return id;
+        }
+
+        function Cargar_Formulario_Estudiante(data) {
+            document.getElementById("foto-nav").src = data.Foto1;
+        }
+
+        function Cargar_Usuario(id) {
+            Verifica_Estudiante(id);
+        }
+
+        function Redireccionar() {
+            var id = document.getElementById("ocultoid").value;
+            document.getElementById("index").href += "?id=" + id;
+            document.getElementById("Asignacion").href += "?id=" + id;
+            document.getElementById("Clase").href += "?id=" + id;
+            document.getElementById("Entrega").href += "?id=" + id;
+            document.getElementById("Estado").href += "?id=" + id;
+            document.getElementById("Estudiante").href += "?id=" + id;
+            document.getElementById("Materia").href += "?id=" + id;
+            document.getElementById("Profesor").href += "?id=" + id;
+            document.getElementById("Tipo").href += "?id=" + id;
+        }
+
+        function Guardar_Tipo() {
+
+            tipo.id_tipo = document.getElementById("id_tipo").value;
+            tipo.tipo_asignacion = document.getElementById("tipo_asignacion").value;
+            Ajax(tipo, "Tipo", "PUT", document.getElementById("cargando"), document.getElementById("id_tipo").value);
+            Limpiar_Formulario()
+        }
+
+        function Eliminar_Tipo() {
+            tipo.id_tipo = document.getElementById("id_tipo").value;
+            Ajax(tipo, "Tipo", "DELETE", document.getElementById("cargando"), document.getElementById("id_tipo").value);
+            Limpiar_Formulario()
+        }
+
+        function Actualizar_Tipo() {
+            tipo.id_tipo = document.getElementById("id_tipo").value;
+            tipo.tipo_asignacion = document.getElementById("tipo_asignacion").value;
+            Ajax(tipo, "Tipo", "POST", document.getElementById("cargando"), document.getElementById("id_tipo").value);
+            Limpiar_Formulario()
+        }
+
+        function Cargar_Formulario(objeto) {
+            document.getElementById("id_tipo").value = objeto.Id_tipo1;
+            document.getElementById("tipo_asignacion").value = objeto.Tipo_asignacion1;
+            Habilitar_Botones();
+        }
+
+        function Limpiar_Formulario() {
+            document.getElementById("id_tipo").value = "";
+            document.getElementById("tipo_asignacion").value = "";
+            Deshabilitar_Botones();
+        }
+
+        function Verificar_Eliminar(id) {
+            var answer = window.confirm("¿Desea eliminar el estado " + id + " ?")
+            if (answer) {
+                tipo.id_tipo = id;
+                Ajax(tipo, "Tipo", "DELETE", document.getElementById("cargando"), id);
+                Cargar_Tabla();
+            } else {
+                alert("No se ha realizado ninguna accion")
+            }
+        }
+
+        function Cargar_Tabla() {
+            Tabla_Tipos("");
+        }
+
+        $(document).ready(function () {
+            document.getElementById("footer").innerHTML = Creador_Footer()
+            document.getElementById("espacionav").innerHTML = Creador_Nav();
+            var id = obtenerid();
+            Cargar_Usuario(id);
+            Redireccionar();
+
+
+            document.getElementById("btn_guardar").addEventListener("click", Guardar_Tipo);
+            document.getElementById("btn_eliminar").addEventListener("click", Eliminar_Tipo);
+            document.getElementById("btn_actualizar").addEventListener("click", Actualizar_Tipo);
+            Tabla_Tipos(document.getElementById("cargando"));
+            Deshabilitar_Botones();;
+        });
+    </script>
+</body>
+</html>

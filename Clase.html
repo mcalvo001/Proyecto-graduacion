@@ -1,0 +1,253 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="google-signin-scope" content="profile email">
+    <meta name="google-signin-client_id" content="187552463287-lecbkuru75c9gn5o6gd1do7bihm5n333.apps.googleusercontent.com">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.1/css/jquery.dataTables.css">
+    <link href="Css/StyleSheet1.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <link href="Css/css.css" rel="stylesheet" />
+</head>
+<body>
+
+    <div class="popup" id="popup-1">
+        <div class="overlay"></div>
+        <div class="content">
+            <div id="cerarx" class="close-btn">&times;</div>
+            <h1>Desea ingresar un estudiante a esta clase?</h1>
+            <input type="text" id="id_clase_pop" placeholder="id de la clase">
+            <input type="text" id="id_estudiante_pop" placeholder="id del estudiante">
+            <hr />
+            <input type="button" id="guardarestudiante" value="Guardar Estudiante" class="btn btn-success">
+        </div>
+    </div>
+
+    <div id="espacionav"></div>
+    <hr />
+    <h1>Gestión "Clases"</h1>
+    <div><p id="cargando"></p></div>
+
+    <div class="row justify-content-center">
+        <div class="col">
+
+            <div class="input-group mb-3" id="div1">
+                <input class="form-control" type="text" id="id_clase" placeholder="Id de la clase" onkeyup="Cargar_Clase(event)" />
+                <input class="form-control" type="text" id="id_profesor" placeholder="Cedula del profesor" onkeyup="Cargar_Profesor(event)" />
+            </div>
+            <div class="input-group mb-3" id="div1">
+                <input class="form-control" type="text" id="nombre" placeholder="Nombre del profesor" disabled />
+                <input class="form-control" type="text" id="apellidoI" placeholder="Primer apellido del profesor" disabled />
+                <input class="form-control" type="text" id="apellidoII" placeholder="Segundo apellido del profesor" disabled />
+            </div>
+            <div class="input-group mb-3" id="div1">
+                <select class="form-control" id="id_materia">
+                    <option disabled selected>-- Seleccione una materia --</option>
+                </select>
+                <input class="form-control" type="text" id="nombre_clase" placeholder="Nombre de la clase" />
+            </div>
+
+
+        </div>
+    </div>
+    <input type="button" value="Guardar" id="btn_guardar" class="btn btn-success" />
+    <input type="button" value="Eliminar" id="btn_eliminar" class="btn btn-danger" disabled />
+    <input type="button" value="Actualizar" id="btn_actualizar" class="btn btn-warning" disabled />
+    <input id="modalbtn" value="Estudiante" type="button" class="btn btn-primary">
+
+
+
+    <hr />
+    <input hidden id="ocultoid" />
+    <div class="table-responsive-sm">
+        <table id="clase" class="display">
+            <thead>
+                <tr>
+                    <th>Id_clase</th>
+                    <th>Id_profesor</th>
+                    <th>Id-materia</th>
+                    <th>Clase</th>
+                    <th>Modificar</th>
+                    <th>Eliminar</th>
+
+                </tr>
+            </thead>
+            <tbody id="clases_body">
+        </table>
+    </div>
+
+    <input hidden id="ocultoid" />
+    <div id="footer"></div>
+    <script src="Js/jquery-3.6.0.min.js"></script>
+    <script src="Js/Ajax.js"></script>
+
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.1/js/jquery.dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
+
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <script src="Js/logeo.js"></script>
+
+    <script type="text/javascript">
+
+        function obtenerid() {
+            const valores = window.location.search;
+            const urlParams = new URLSearchParams(valores);
+            var id = urlParams.get('id');
+            document.getElementById("ocultoid").value = id;
+            return id;
+        }
+
+        function Cargar_Formulario_Estudiante(data) {
+            document.getElementById("foto-nav").src = data.Foto1;
+        }
+
+        function Cargar_Usuario(id) {
+            Verifica_Estudiante(id);
+        }
+
+        function Redireccionar() {
+            var id = document.getElementById("ocultoid").value;
+            document.getElementById("index").href += "?id=" + id;
+            document.getElementById("Asignacion").href += "?id=" + id;
+            document.getElementById("Clase").href += "?id=" + id;
+            document.getElementById("Entrega").href += "?id=" + id;
+            document.getElementById("Estado").href += "?id=" + id;
+            document.getElementById("Estudiante").href += "?id=" + id;
+            document.getElementById("Materia").href += "?id=" + id;
+            document.getElementById("Profesor").href += "?id=" + id;
+            document.getElementById("Tipo").href += "?id=" + id;
+        }
+        function Guardar_Estutiante_Clase() {
+
+            clase_estudiante.id_clase = document.getElementById("id_clase_pop").value;
+            clase_estudiante.carnet = document.getElementById("id_estudiante_pop").value;;
+
+
+            Ajax(clase_estudiante, "Clases_Estudiante", "PUT", document.getElementById("cargando"), document.getElementById("id_clase").value);
+            Limpiar_Formulario()
+        }
+
+        function Guardar_Clase() {
+
+            clase.id_clase = document.getElementById("id_clase").value;
+            clase.id_profesor = document.getElementById("id_profesor").value;
+            clase.id_materia = document.getElementById("id_materia").value;
+            clase.nombre_clase = document.getElementById("nombre_clase").value;
+
+            Ajax(clase, "Clase", "PUT", document.getElementById("cargando"), document.getElementById("id_clase").value);
+            Limpiar_Formulario()
+        }
+
+        function Eliminar_Clase() {
+            clase.id_clase = document.getElementById("id_clase").value;
+            Ajax(clase, "Clase", "DELETE", document.getElementById("cargando"), document.getElementById("id_clase").value);
+            Limpiar_Formulario()
+        }
+
+        function Actualizar_Clase() {
+            clase.id_clase = document.getElementById("id_clase").value;
+            clase.id_profesor = document.getElementById("id_profesor").value;
+            clase.id_materia = document.getElementById("id_materia").value;
+            clase.nombre_clase = document.getElementById("nombre_clase").value;
+
+            Ajax(clase, "Clase", "POST", document.getElementById("cargando"), document.getElementById("id_clase").value);
+            Limpiar_Formulario()
+        }
+
+        function Cargar_Formulario(objeto) {
+            console.log(objeto);
+
+            document.getElementById("id_clase").value = objeto.Id_clase1;
+            document.getElementById("id_materia").value = objeto.Id_materia1.Id_materia1;
+            document.getElementById("nombre_clase").value = objeto.Nombre_clase1;
+            document.getElementById("id_profesor").value = objeto.Id_profesor1.Cedula1;
+            var cedula = document.getElementById("id_profesor").value;
+            profesor.cedula = cedula;
+            Verifica_Profesor(profesor, 2)
+            Habilitar_Botones();
+        }
+
+        function Cargar_Formulario_Profesor(objeto) {
+            document.getElementById("id_profesor").value = objeto.Cedula1;
+            document.getElementById("nombre").value = objeto.Nombre1;
+            document.getElementById("apellidoI").value = objeto.Apellido_I1;
+            document.getElementById("apellidoII").value = objeto.Apellido_II1;
+        }
+
+        function Limpiar_Formulario() {
+            document.getElementById("id_clase").value = "";
+            document.getElementById("id_profesor").value = "";
+            document.getElementById("id_materia").value = "";
+            document.getElementById("nombre_clase").value = "";
+            document.getElementById("nombre").value = "";
+            document.getElementById("apellidoI").value = "";
+            document.getElementById("apellidoII").value = "";
+            Deshabilitar_Botones();
+        }
+
+        function Verificar_Eliminar(id) {
+            var answer = window.confirm("¿Desea eliminar la clase " + id + " ?")
+            if (answer) {
+                clase.id_clase = id;
+                Ajax(clase, "Clase", "DELETE", document.getElementById("cargando"), id);
+                Cargar_Tabla();
+            } else {
+                alert("No se ha realizado ninguna accion")
+            }
+            Limpiar_Formulario()
+        }
+
+        function Cargar_Tabla() {
+            Tabla_Clases("");
+        }
+
+        function Cargar_Clase(event) {
+            if (event.which == 13 || event.KeyCode == 13) {
+                if (document.getElementById("id_clase").value != "") {
+                    var id_clase = document.getElementById("id_clase").value;
+                    clase.id_clase = id_clase;
+                    Verifica_Clase(clase)
+                }
+            }
+        }
+
+        function Cargar_Profesor(event) {
+            if (event.which == 13 || event.KeyCode == 13) {
+                if (document.getElementById("id_profesor").value != "") {
+                    var cedula = document.getElementById("id_profesor").value;
+                    Verifica_Profesor(cedula)
+                }
+            }
+        }
+
+        function togglePopup() {
+            document.getElementById("popup-1").classList.toggle("active");
+        }
+
+        $(document).ready(function () {
+            document.getElementById("footer").innerHTML = Creador_Footer()
+            document.getElementById("espacionav").innerHTML = Creador_Nav();
+            var id = obtenerid();
+            Cargar_Usuario(id);
+            Redireccionar();
+
+            document.getElementById("btn_guardar").addEventListener("click", Guardar_Clase);
+            document.getElementById("btn_eliminar").addEventListener("click", Eliminar_Clase);
+            document.getElementById("btn_actualizar").addEventListener("click", Actualizar_Clase);
+            document.getElementById("modalbtn").addEventListener("click", togglePopup);
+            document.getElementById("cerarx").addEventListener("click", togglePopup);
+            document.getElementById("guardarestudiante").addEventListener("click", Guardar_Estutiante_Clase);
+
+            Tabla_Clases(document.getElementById("cargando"));
+            Materias_Select(document.getElementById("id_materia"));
+            Deshabilitar_Botones();;
+        });
+        $('#exampleModal').on('shown.bs.modal', function () {
+            $('#modalbtn').trigger('focus')
+        })
+
+    </script>
+</body>
+</html>
